@@ -18,7 +18,7 @@ export interface FORM{
   field:string,
   name:string,
   //maybe required?
-  reuired?:boolean
+  required?:boolean
 }
 
 function TemplateListSection({userSearchInput}:any) {

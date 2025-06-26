@@ -1,6 +1,6 @@
 import React from 'react'
-import Sidenav from './_component/Sidenav';
-import Header from './_component/Header';
+import SideNav from './_components/SideNav';
+import Header from './_components/Header';
 
 function layout({
   children,
@@ -8,9 +8,9 @@ function layout({
   children: React.ReactNode;
 }>) {
   return (
-    <div>
+    <div className='bg-slate-100 h-screen'>
         <div className='md:w-64 hidden md:block fixed'>
-            <Sidenav/>
+            <SideNav/>
         </div>
         <div className='md:ml-64'>
             <Header/>
