@@ -71,9 +71,40 @@
 // })
 
 
-import {
-  GoogleGenAI,
-} from '@google/genai';
+// import {
+//   GoogleGenAI,
+// } from '@google/genai';
+//   const ai = new GoogleGenAI({
+//     apiKey: process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY,
+//   });
+//   const config = {
+//     thinkingConfig: {
+//       thinkingBudget: -1,
+//     },
+//     responseMimeType: 'text/plain',
+//   };
+//   const model = 'gemini-2.5-flash';
+//   const contents = [
+//     {
+//       role: 'user',
+//       parts: [
+//         {
+//           text: `INSERT_INPUT_HERE`,
+//         },
+//       ],
+//     },
+//   ];
+
+//   export const response = await ai.models.generateContentStream({
+//     model,
+//     config,
+//     contents,
+//   });
+  
+
+import { GoogleGenAI } from '@google/genai';
+
+export const generateContent = async (prompt: string) => {
   const ai = new GoogleGenAI({
     apiKey: process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY,
   });
@@ -89,17 +120,21 @@ import {
       role: 'user',
       parts: [
         {
-          text: `INSERT_INPUT_HERE`,
+          text: prompt, // Use the dynamic prompt passed to the function
         },
       ],
     },
   ];
 
-  export const response = await ai.models.generateContentStream({
+  const response = await ai.models.generateContentStream({
     model,
     config,
     contents,
   });
-  
 
-
+  let fullText = '';
+  for await (const chunk of response) {
+    fullText += chunk.text; // Collect the stream output
+  }
+  return fullText;
+};

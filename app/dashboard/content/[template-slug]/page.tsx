@@ -1,53 +1,122 @@
-"use client"
-import React, { useState } from 'react'
-import FormSection from '../_components/FormSection'
-import OutputSection from '../_components/OutputSection'
-import Templates from '@/app/(data)/Templates'
-import { TEMPLATE } from '../../_components/TemplateListSection'
-import { Button } from '@/components/ui/button'
-import { ArrowLeft } from 'lucide-react'
-import Link from 'next/link'
-import { response } from '@/utils/AiModel'
+// "use client"
+// import React, { useState } from 'react'
+// import FormSection from '../_components/FormSection'
+// import OutputSection from '../_components/OutputSection'
+// import Templates from '@/app/(data)/Templates'
+// import { TEMPLATE } from '../../_components/TemplateListSection'
+// import { Button } from '@/components/ui/button'
+// import { ArrowLeft } from 'lucide-react'
+// import Link from 'next/link'
+// import { response } from '@/utils/AiModel'
 
-interface PROPS{
-  params:{
-    'template-slug':string
-  }
+// interface PROPS{
+//   params:{
+//     'template-slug':string
+//   }
+// }
+// function CreateNewContent(props:PROPS) {
+
+//   const selectedTemplate:TEMPLATE | undefined=Templates?.find((item)=>item.slug==props.params['template-slug']);
+
+//   const [loading,setLoading] =useState(false);
+//   const GenerateAIContent=async(formData:any)=>{
+//     setLoading(true);
+//     const SelectedPrompt=selectedTemplate?.aiPrompt;
+
+//     const FinalAIPrompt=JSON.stringify(formData)+ ", "+SelectedPrompt;
+
+//     const result=await response.sendMessage(FinalAIPrompt);
+
+//     console.log(result.response.text());
+//     setLoading(false);
+//   }
+
+//   return (
+//     <div className='p-5'>
+//       <Link href={"/dashboard"}>
+//       <Button><ArrowLeft/>Back</Button>
+//       </Link>
+//       <div className='grid grid-cols-1 md:grid-cols-3 gap-5 py-5'>
+//         {/* FormSection */}
+//           <FormSection selectedTemplate={selectedTemplate}
+//           userFormInput={(v:any)=>GenerateAIContent(v)}
+//           loading={loading} />
+//         {/* OutputSection */}
+//         <div className='col-span-2'>
+//           <OutputSection/>
+//         </div>
+//       </div>
+//     </div>
+//   )
+// }
+
+// export default CreateNewContent
+
+"use client";
+import React, { useState } from 'react';
+import FormSection from '../_components/FormSection';
+import OutputSection from '../_components/OutputSection';
+import Templates from '@/app/(data)/Templates';
+import { TEMPLATE } from '../../_components/TemplateListSection';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
+import { generateContent } from '@/utils/AiModel';
+
+interface PROPS {
+  params: {
+    'template-slug': string;
+  };
 }
-function CreateNewContent(props:PROPS) {
 
-  const selectedTemplate:TEMPLATE | undefined=Templates?.find((item)=>item.slug==props.params['template-slug']);
+function CreateNewContent(props: PROPS) {
+  const selectedTemplate: TEMPLATE | undefined = Templates?.find(
+    (item) => item.slug === props.params['template-slug']
+  );
 
-  const [loading,setLoading] =useState(false);
-  const GenerateAIContent=async(formData:any)=>{
+  const [loading, setLoading] = useState(false);
+  const [output, setOutput] = useState<string>(''); 
+
+  const GenerateAIContent = async (formData: any) => {
     setLoading(true);
-    const SelectedPrompt=selectedTemplate?.aiPrompt;
+    const selectedPrompt = selectedTemplate?.aiPrompt;
 
-    const FinalAIPrompt=JSON.stringify(formData)+ ", "+SelectedPrompt;
+    // Construct the prompt (adjust this based on your formData structure if needed)
+    const finalAIPrompt = `${JSON.stringify(formData)}, ${selectedPrompt}`;
 
-    const result=await response.sendMessage(FinalAIPrompt);
 
-    console.log(result.response.text());
+    try {
+      const result = await generateContent(finalAIPrompt); 
+      setOutput(result);
+      console.log(result);
+    } catch (error) {
+      console.error('Error generating content:', error);
+    }
+
     setLoading(false);
-  }
+  };
 
   return (
-    <div className='p-5'>
-      <Link href={"/dashboard"}>
-      <Button><ArrowLeft/>Back</Button>
+    <div className="p-5">
+      <Link href="/dashboard">
+        <Button>
+          <ArrowLeft /> Back
+        </Button>
       </Link>
-      <div className='grid grid-cols-1 md:grid-cols-3 gap-5 py-5'>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 py-5">
         {/* FormSection */}
-          <FormSection selectedTemplate={selectedTemplate}
-          userFormInput={(v:any)=>GenerateAIContent(v)}
-          loading={loading} />
+        <FormSection
+          selectedTemplate={selectedTemplate}
+          userFormInput={GenerateAIContent}
+          loading={loading}
+        />
         {/* OutputSection */}
-        <div className='col-span-2'>
-          <OutputSection/>
+        <div className="col-span-2">
+          <OutputSection /> {/* Pass the output to display */}
         </div>
       </div>
     </div>
-  )
+  );
 }
 
-export default CreateNewContent
+export default CreateNewContent;
