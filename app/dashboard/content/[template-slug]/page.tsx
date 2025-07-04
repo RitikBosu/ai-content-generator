@@ -76,6 +76,7 @@ function CreateNewContent(props: PROPS) {
 
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<string>(''); 
+  const [aiOutput, setAiOutput] = useState<string>('');
 
   const GenerateAIContent = async (formData: any) => {
     setLoading(true);
@@ -89,6 +90,7 @@ function CreateNewContent(props: PROPS) {
       const result = await generateContent(finalAIPrompt); 
       setOutput(result);
       console.log(result);
+      setAiOutput(result);
     } catch (error) {
       console.error('Error generating content:', error);
     }
@@ -112,7 +114,7 @@ function CreateNewContent(props: PROPS) {
         />
         {/* OutputSection */}
         <div className="col-span-2">
-          <OutputSection /> {/* Pass the output to display */}
+          <OutputSection aiOutput={aiOutput}/> {/* Pass the output to display */}
         </div>
       </div>
     </div>
