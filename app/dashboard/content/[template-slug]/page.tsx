@@ -62,6 +62,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { generateContent } from '@/utils/AiModel';
+import { db } from '@/utils/db';
+import { AIOutput } from '@/utils/schema';
+import { useUser } from '@clerk/nextjs';
+import moment from 'moment';
 
 interface PROPS {
   params: {
@@ -77,6 +81,7 @@ function CreateNewContent(props: PROPS) {
   const [loading, setLoading] = useState(false);
   const [output, setOutput] = useState<string>(''); 
   const [aiOutput, setAiOutput] = useState<string>('');
+  const {user} = useUser();
 
   const GenerateAIContent = async (formData: any) => {
     setLoading(true);
@@ -91,12 +96,42 @@ function CreateNewContent(props: PROPS) {
       setOutput(result);
       console.log(result);
       setAiOutput(result);
+      await SaveInDb(JSON.stringify(formData),selectedTemplate?.slug, result)
+
     } catch (error) {
       console.error('Error generating content:', error);
     }
 
     setLoading(false);
   };
+
+  //in video
+  const SaveInDb=async(formData:any, slug:any, aiResp:string)=>{
+    const result=await db.insert(AIOutput).values({
+      FormData:formData,
+      templateSlug:slug,
+      aiResponse:aiResp,
+      createdBy:user?.primaryEmailAddress?.emailAddress,
+      createdAt: new Date().toISOString()
+
+    });
+    console.log(result)
+  }
+
+//my logic
+// const SaveInDb = async (formData: any, slug: any, aiResp: string) => {
+//   try {
+//     await db.insert(AIOutput).values({
+//       formData: formData,
+//       templateSlug: slug,
+//       aiResponse: aiResp,
+//       createdBy: user?.primaryEmailAddress?.emailAddress,
+//       createdAt: new Date().toISOString(),
+//     });
+//   } catch (err) {
+//     console.error("Error saving to DB", err);
+//   }
+// };
 
   return (
     <div className="p-5">
