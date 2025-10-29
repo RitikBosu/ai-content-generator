@@ -191,11 +191,14 @@ export interface HISTORY{
 
 async function History() {
   const user = await currentUser();
+  const userEmail = user?.primaryEmailAddress?.emailAddress;
 
   // @ts-ignore
-  const HistoryList: HISTORY[] = await db.select().from(AIOutput)
-    .where(eq(AIOutput?.createdBy, user?.primaryEmailAddress?.emailAddress))
-    .orderBy(desc(AIOutput.id));
+  const HistoryList: HISTORY[] = userEmail 
+    ? await db.select().from(AIOutput)
+        .where(eq(AIOutput?.createdBy, userEmail))
+        .orderBy(desc(AIOutput.id))
+    : [];
 
   const GetTemplateName = (slug: string) => {
     const template: TEMPLATE | any = Templates?.find((item) => item.slug == slug)

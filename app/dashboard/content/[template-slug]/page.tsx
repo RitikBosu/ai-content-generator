@@ -110,7 +110,7 @@ function CreateNewContent({ params }: PageProps) {
   //in video
   const SaveInDb=async(formData:any, slug:any, aiResp:string)=>{
     const result=await db.insert(AIOutput).values({
-      FormData:formData,
+      formData:formData,
       templateSlug:slug,
       aiResponse:aiResp,
       createdBy:user?.primaryEmailAddress?.emailAddress,

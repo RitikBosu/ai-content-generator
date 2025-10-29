@@ -23,14 +23,16 @@ function UsageTrack() {
     },[updateCreditUsage&&user])
 
     const GetData=async()=>{
-        {/*@ts-ignore*/}
-        const result:HISTORY[]=await db.select().from(AIOutput)
-        .where(eq(AIOutput.createdBy,user?.primaryEmailAddress?.emailAddress));
+        const userEmail = user?.primaryEmailAddress?.emailAddress;
+        if (!userEmail) return;
+        
+        const result = await db.select().from(AIOutput)
+        .where(eq(AIOutput.createdBy, userEmail));
         GetTotalUsage(result)
     }
 
 
-    const GetTotalUsage=(result:HISTORY[])=>{
+    const GetTotalUsage=(result: typeof AIOutput.$inferSelect[])=>{
         let total: number = 0;
         result.forEach(element =>{
             total =total+Number(element.aiResponse?.length)
