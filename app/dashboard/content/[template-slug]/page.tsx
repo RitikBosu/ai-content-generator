@@ -53,7 +53,7 @@
 // export default CreateNewContent
 
 "use client";
-import React, { useState } from 'react';
+import React, { useState, use } from 'react';
 import FormSection from '../_components/FormSection';
 import OutputSection from '../_components/OutputSection';
 import Templates from '@/app/(data)/Templates';
@@ -68,14 +68,15 @@ import { useUser } from '@clerk/nextjs';
 import moment from 'moment';
 
 interface PROPS {
-  params: {
+  params: Promise<{
     'template-slug': string;
-  };
+  }>;
 }
 
 function CreateNewContent(props: PROPS) {
+  const params = use(props.params);
   const selectedTemplate: TEMPLATE | undefined = Templates?.find(
-    (item) => item.slug === props.params['template-slug']
+    (item) => item.slug === params['template-slug']
   );
 
   const [loading, setLoading] = useState(false);
