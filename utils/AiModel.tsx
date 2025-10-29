@@ -115,12 +115,16 @@ export const generateContent = async (prompt: string) => {
     responseMimeType: 'text/plain',
   };
   const model = 'gemini-2.5-flash';
+  
+  // Add instruction to output plain text/markdown instead of RTF
+  const enhancedPrompt = `${prompt}\n\nIMPORTANT: Provide the output in plain text or markdown format only. Do NOT use RTF, HTML tags, or any other formatting codes. Use simple bullet points with - or * for lists.`;
+  
   const contents = [
     {
       role: 'user',
       parts: [
         {
-          text: prompt, // Use the dynamic prompt passed to the function
+          text: enhancedPrompt, // Use the enhanced prompt
         },
       ],
     },
