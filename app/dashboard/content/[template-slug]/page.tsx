@@ -67,16 +67,17 @@ import { AIOutput } from '@/utils/schema';
 import { useUser } from '@clerk/nextjs';
 import moment from 'moment';
 
-interface PROPS {
+interface PageProps {
   params: Promise<{
     'template-slug': string;
   }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-function CreateNewContent(props: PROPS) {
-  const params = use(props.params);
+function CreateNewContent({ params }: PageProps) {
+  const resolvedParams = use(params);
   const selectedTemplate: TEMPLATE | undefined = Templates?.find(
-    (item) => item.slug === params['template-slug']
+    (item) => item.slug === resolvedParams['template-slug']
   );
 
   const [loading, setLoading] = useState(false);
